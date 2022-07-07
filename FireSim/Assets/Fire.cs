@@ -30,11 +30,14 @@ public class Fire : MonoBehaviour
 //******************************************************************************
 //                              Public Functions
 //******************************************************************************
-    public List<GameObject> CheckNearbyFlammableObjects(float radius)
+    public void UpdateSparkRadius(float radius)
     {
         //Update sparkRadius for Gizmo
         sparkRadius = radius;
-
+    }
+    
+    public List<GameObject> CheckNearbyFlammableObjects()
+    {
         //Create List of flammable objects nearby
         List<GameObject> flamObjects = new List<GameObject>();
 

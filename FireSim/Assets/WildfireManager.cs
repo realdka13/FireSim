@@ -21,7 +21,10 @@ public class WildfireManager : MonoBehaviour
     [SerializeField]
     private float sparkRadius;
 
+    [Space]
+
     //Fire Tracker
+    [SerializeField]
     private List<GameObject> fireObjects = new List<GameObject>();
 
 //******************************************************************************
@@ -57,7 +60,7 @@ public class WildfireManager : MonoBehaviour
         //Add objects to flamObject List
         foreach(GameObject fireObject in fireObjects)
         {
-            flamObjects.AddRange((fireObject.GetComponent<Fire>().CheckNearbyFlammableObjects(sparkRadius)) ?? new List<GameObject>());
+            flamObjects.AddRange((fireObject.GetComponent<Fire>().CheckNearbyFlammableObjects()) ?? new List<GameObject>());
         }
 
         //Insantiate flames
@@ -67,6 +70,17 @@ public class WildfireManager : MonoBehaviour
             {
                 fireObjects.Add(Instantiate(firePrefab, flamObject.transform));
             }
+        }
+    }
+
+//******************************************************************************
+//                              Editor Functions
+//******************************************************************************
+    private void OnValidate()
+    {
+        foreach (GameObject fireObject in fireObjects)
+        {
+            fireObject.GetComponent<Fire>().UpdateSparkRadius(sparkRadius);
         }
     }
 }
