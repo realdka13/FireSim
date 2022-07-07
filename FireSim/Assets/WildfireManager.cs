@@ -1,30 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 /*
     Keeps track of ticks
 */
 
-//TODO Comments
-
-
 public class WildfireManager : MonoBehaviour
 {
     //Tick Tracker
-    public float tickTime = 2f;
+    [Header("Tick Settings")]
+    [SerializeField]
+    private float tickTime = 2f;
     private float timeSinceLastTick = 0f;
 
+    //Fire Modifiers
+    [Header("Fire Settings")]
+    [SerializeField]
+    private GameObject firePrefab;
+    [SerializeField]
+    private float sparkRadius;
+
     //Fire Tracker
-    public List<GameObject> fireObjects = new List<GameObject>();
-    public GameObject firePrefab;
+    private List<GameObject> fireObjects = new List<GameObject>();
 
 //******************************************************************************
 //                              Private Functions
 //******************************************************************************
+    private void Start()
+    {
+        //Error Check
+        if(sparkRadius == 0){Debug.LogWarning("Spark Radius = 0");}
+    }
+
     private void Update()
     {
+        //Check if tickTime has passed
         if(timeSinceLastTick > tickTime)
         {
+            Debug.Log("Tick");
             SpreadFire();
             timeSinceLastTick = 0f;
         }
@@ -36,14 +50,17 @@ public class WildfireManager : MonoBehaviour
 
     private void SpreadFire()
     {
-        Debug.Log("Spread the Fire!");
-
+        //Create List of objects to light on fire
         List<GameObject> flamObjects = new List<GameObject>();
         flamObjects.Clear();
+
+        //Add objects to flamObject List
         foreach(GameObject fireObject in fireObjects)
         {
-            flamObjects.AddRange((fireObject.GetComponent<Fire>().CheckNearbyFlammableObjects()) ?? new List<GameObject>());
+            flamObjects.AddRange((fireObject.GetComponent<Fire>().CheckNearbyFlammableObjects(sparkRadius)) ?? new List<GameObject>());
         }
+
+        //Insantiate flames
         if(flamObjects.Count > 0)
         {
             foreach (GameObject flamObject in flamObjects)
