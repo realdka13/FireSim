@@ -4,7 +4,6 @@ using UnityEngine;
 
 //TODO some chance of fire spreading, rather than garunteed
 //TODO indicator for chance to start on fire
-//TODO instead of checking gameobject as a whole, check for fireSpawn locations on each gameobject
 //TODO minimal global variables in this script?
 //TODO better method/remove burnMaterial variable
 
@@ -28,20 +27,20 @@ public class SparkPoint : MonoBehaviour
         sparkRadius = radius;
     }
     
-    public List<GameObject> CheckNearbyFlammableObjects()
+    public List<GameObject> CheckNearbySparkPoints()
     {
         //Create List of flammable objects nearby
-        List<GameObject> flamObjects = new List<GameObject>();
+        List<GameObject> sparkPoints = new List<GameObject>();
 
         //Check nearby for flammable objects - 1024 is Layer 10
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, sparkRadius, 1024);
         foreach (Collider collider in hitColliders)
         {
-            flamObjects.Add(collider.gameObject);
-            collider.gameObject.layer = 11;
+            sparkPoints.Add(collider.gameObject);
+            collider.gameObject.layer = 11; //Layer is int
         }
 
-        return flamObjects;
+        return sparkPoints;
     }
 
 //******************************************************************************

@@ -25,7 +25,7 @@ public class WildfireManager : MonoBehaviour
 
     //Fire Tracker
     [SerializeField]
-    private List<GameObject> fireObjects = new List<GameObject>();
+    private List<GameObject> sparkPoints = new List<GameObject>();
 
 //******************************************************************************
 //                              Private Functions
@@ -54,21 +54,24 @@ public class WildfireManager : MonoBehaviour
     private void SpreadFire()
     {
         //Create List of objects to light on fire
-        List<GameObject> flamObjects = new List<GameObject>();
-        flamObjects.Clear();
+        List<GameObject> pointsInRange = new List<GameObject>();
+        pointsInRange.Clear();
 
-        //Add objects to flamObject List
-        foreach(GameObject fireObject in fireObjects)
+        //Add objects to sparkPoint List
+        foreach(GameObject sparkPoint in sparkPoints)
         {
-            flamObjects.AddRange((fireObject.GetComponent<SparkPoint>().CheckNearbyFlammableObjects()) ?? new List<GameObject>());
+            pointsInRange.AddRange((sparkPoint.GetComponent<SparkPoint>().CheckNearbySparkPoints()) ?? new List<GameObject>());
         }
 
-        //Insantiate flames
-        if(flamObjects.Count > 0)
+        if(pointsInRange.Count > 0)
         {
-            foreach (GameObject flamObject in flamObjects)
+            foreach (GameObject point in pointsInRange)
             {
-                fireObjects.Add(Instantiate(firePrefab, flamObject.transform));
+                //Insantiate flames
+                Instantiate(firePrefab, point.transform);
+
+                //Add to sparkPoints List
+                sparkPoints.Add(point);
             }
         }
     }
@@ -78,9 +81,9 @@ public class WildfireManager : MonoBehaviour
 //******************************************************************************
     private void OnValidate()
     {
-        foreach (GameObject fireObject in fireObjects)
+        foreach (GameObject sparkPoint in sparkPoints)
         {
-            fireObject.GetComponent<SparkPoint>().UpdateSparkRadius(sparkRadius);
+            sparkPoint.GetComponent<SparkPoint>().UpdateSparkRadius(sparkRadius);
         }
     }
 }
