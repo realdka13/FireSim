@@ -60,7 +60,7 @@ public class WildfireManager : MonoBehaviour
         //Add objects to flamObject List
         foreach(GameObject fireObject in fireObjects)
         {
-            flamObjects.AddRange((fireObject.GetComponent<Fire>().CheckNearbyFlammableObjects()) ?? new List<GameObject>());
+            flamObjects.AddRange((fireObject.GetComponent<SparkPoint>().CheckNearbyFlammableObjects()) ?? new List<GameObject>());
         }
 
         //Insantiate flames
@@ -80,7 +80,7 @@ public class WildfireManager : MonoBehaviour
     {
         foreach (GameObject fireObject in fireObjects)
         {
-            fireObject.GetComponent<Fire>().UpdateSparkRadius(sparkRadius);
+            fireObject.GetComponent<SparkPoint>().UpdateSparkRadius(sparkRadius);
         }
     }
 }

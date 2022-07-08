@@ -8,7 +8,7 @@ using UnityEngine;
 //TODO minimal global variables in this script?
 //TODO better method/remove burnMaterial variable
 
-public class Fire : MonoBehaviour
+public class SparkPoint : MonoBehaviour
 {
     [SerializeField]
     private Material burnMaterial;
@@ -18,14 +18,6 @@ public class Fire : MonoBehaviour
 //******************************************************************************
 //                              Private Functions
 //******************************************************************************
-    private void Start()
-    {
-        //Changes material color to show burning state
-        if(transform.parent.gameObject.layer == 11)
-        {
-            transform.parent.gameObject.GetComponent<MeshRenderer>().sharedMaterial = burnMaterial;
-        }
-    }
 
 //******************************************************************************
 //                              Public Functions
