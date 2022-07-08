@@ -25,7 +25,7 @@ public class WildfireManager : MonoBehaviour
 
     //Fire Tracker
     [SerializeField]
-    private List<GameObject> sparkPoints = new List<GameObject>();
+    private List<GameObject> burningPoints = new List<GameObject>();
 
 //******************************************************************************
 //                              Private Functions
@@ -57,21 +57,28 @@ public class WildfireManager : MonoBehaviour
         List<GameObject> pointsInRange = new List<GameObject>();
         pointsInRange.Clear();
 
-        //Add objects to sparkPoint List
-        foreach(GameObject sparkPoint in sparkPoints)
+        //Create flames and add objects to burningPoint List
+        foreach(GameObject burningPoint in burningPoints)
         {
-            pointsInRange.AddRange((sparkPoint.GetComponent<SparkPoint>().CheckNearbySparkPoints()) ?? new List<GameObject>());
+            pointsInRange.AddRange((burningPoint.GetComponent<SparkPoint>().CheckNearbySparkPoints()) ?? new List<GameObject>());
+            Debug.Log("Checked " + burningPoint.transform.parent.gameObject.name);
         }
 
         if(pointsInRange.Count > 0)
         {
             foreach (GameObject point in pointsInRange)
             {
-                //Insantiate flames
-                Instantiate(firePrefab, point.transform);
+                if(Random.value < point.GetComponent<SparkPoint>().GetBurnChance()) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
+                {
+                    //Insantiate flames
+                    Instantiate(firePrefab, point.transform);
 
-                //Add to sparkPoints List
-                sparkPoints.Add(point);
+                    //Change to burning layer
+                    point.layer = 11; //Layer is int
+
+                    //Add to burningPoints List
+                    burningPoints.Add(point);
+                }
             }
         }
     }
@@ -81,9 +88,9 @@ public class WildfireManager : MonoBehaviour
 //******************************************************************************
     private void OnValidate()
     {
-        foreach (GameObject sparkPoint in sparkPoints)
+        foreach (GameObject burningPoint in burningPoints)
         {
-            sparkPoint.GetComponent<SparkPoint>().UpdateSparkRadius(sparkRadius);
+            burningPoint.GetComponent<SparkPoint>().UpdateSparkRadius(sparkRadius);
         }
     }
 }
