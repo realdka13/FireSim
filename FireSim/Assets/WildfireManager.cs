@@ -61,7 +61,6 @@ public class WildfireManager : MonoBehaviour
         foreach(GameObject burningPoint in burningPoints)
         {
             pointsInRange.AddRange((burningPoint.GetComponent<SparkPoint>().CheckNearbySparkPoints()) ?? new List<GameObject>());
-            Debug.Log("Checked " + burningPoint.transform.parent.gameObject.name);
         }
 
         if(pointsInRange.Count > 0)
@@ -73,8 +72,8 @@ public class WildfireManager : MonoBehaviour
                     //Insantiate flames
                     Instantiate(firePrefab, point.transform);
 
-                    //Change to burning layer
-                    point.layer = 11; //Layer is int
+                    //Tell SparkPoint its burning
+                    point.GetComponent<SparkPoint>().SetToBurning();
 
                     //Add to burningPoints List
                     burningPoints.Add(point);

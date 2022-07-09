@@ -1,0 +1,21 @@
+FireChanceIndicator
+    Change to fire symbol if starts burning while selected
+    Updates values on tick rather than every frame
+        Remove stuff from update
+    Take Range Into account
+
+SparkPoint
+    enviro Variables
+        Wind
+        Humidity
+        Sunlight
+        ...
+        ...
+        ...
+    minimal global variables in this script?
+    Remove temp gloabl starting burning
+    Gizmos not quite working
+
+Other
+    Organize Project folders
+    Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
