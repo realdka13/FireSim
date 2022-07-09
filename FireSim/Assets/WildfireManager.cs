@@ -11,6 +11,8 @@ public class WildfireManager : MonoBehaviour
     //Tick Tracker
     [Header("Tick Settings")]
     [SerializeField]
+    private bool tickEnable;
+    [SerializeField]
     private float tickTime = 2f;
     private float timeSinceLastTick = 0f;
 
@@ -39,15 +41,19 @@ public class WildfireManager : MonoBehaviour
     private void Update()
     {
         //Check if tickTime has passed
-        if(timeSinceLastTick > tickTime)
+        if((timeSinceLastTick > tickTime) && tickEnable)
         {
             Debug.Log("Tick");
             SpreadFire();
             timeSinceLastTick = 0f;
         }
-        else
+        else if(tickEnable)
         {
             timeSinceLastTick += Time.deltaTime;
+        }
+        else
+        {
+            timeSinceLastTick = 0f;
         }
     }
 

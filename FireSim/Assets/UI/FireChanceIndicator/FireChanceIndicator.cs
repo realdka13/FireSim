@@ -61,7 +61,7 @@ public class FireChanceIndicator : MonoBehaviour
                     foreground = radialBar.transform.Find("Foreground").GetComponent<Image>();
                     fireIcon = radialBar.transform.Find("FireIcon").GetComponent<Image>();
 
-                    //Check if selected object has any spark points that are already burning
+                    //Check if selected object has any spark points that are already burning (on select)
                     SparkPoint[] sPoint = hit.collider.gameObject.transform.parent.GetComponentsInChildren<SparkPoint>();
                     for(int i = 0; i < sPoint.Length; i++)
                     {
@@ -79,7 +79,15 @@ public class FireChanceIndicator : MonoBehaviour
             radialBar.transform.position = selectedGameObject.transform.position;
             radialBar.transform.rotation = Camera.main.transform.rotation;
 
-            //Check if the currently selected object is already burning
+            //Check if the currently selected object is already burning (on tick)
+            SparkPoint[] sPoint = selectedGameObject.transform.parent.GetComponentsInChildren<SparkPoint>();
+            for(int i = 0; i < sPoint.Length; i++)
+            {
+                if(sPoint[i].IsBurning()){selectedObjectBurning = true;}
+                else{selectedObjectBurning = false;}
+            }
+
+            //Set Indicator values
             if(selectedObjectBurning)
             {
                 fireIcon.enabled = true;

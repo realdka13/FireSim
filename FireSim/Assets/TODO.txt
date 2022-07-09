@@ -1,3 +1,6 @@
+WildfireManager
+    Tick speed will need to correlate to game speed
+
 FireChanceIndicator
     Change to fire symbol if starts burning while selected
     Updates values on tick rather than every frame
