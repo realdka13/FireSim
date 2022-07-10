@@ -2,23 +2,32 @@ WildfireManager
     Tick speed will need to correlate to game speed
 
 FireChanceIndicator
-    Change to fire symbol if starts burning while selected
     Updates values on tick rather than every frame
         Remove stuff from update
     Take Range Into account
+    Recalculate % to light on fire based on number of spark points, and # of objects on fire around it
+    Move to a HUD rather than in the enviro?
 
 SparkPoint
     enviro Variables
         Wind
         Humidity
         Sunlight
+        Fuel Type
+            Living vs dead
+            Trees vs grass
+        Topography
+        Range
         ...
         ...
         ...
     minimal global variables in this script?
-    Remove temp gloabl starting burning
+    Remove temp global starting burning
     Gizmos not quite working
 
 Other
     Organize Project folders
     Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
+
+How to play
+    Keep in mind number of things on fire around object

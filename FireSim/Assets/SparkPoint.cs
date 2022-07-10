@@ -9,6 +9,9 @@ public class SparkPoint : MonoBehaviour
     private float sparkRadius = 2f;
     private bool isBurning = false;
 
+    [SerializeField]
+    private GameObject wildfireManager;
+
 //******************************************************************************
 //                              Private Functions
 //******************************************************************************
@@ -26,12 +29,24 @@ private void Start()
 //******************************************************************************
     //Update sparkRadius for Gizmo
     public void UpdateSparkRadius(float radius){sparkRadius = radius;}
-    
-    //Return chance to burn
-    public float GetBurnChance(){return burnChance;}
 
     //Return if already burning
     public bool IsBurning(){return isBurning;}
+    
+    //Return chance to burn
+    public float GetBurnChance()
+    {
+        //Get Wind from WM
+        //Get Humidity from WM
+        //Get Sunlight/ToD from WM
+        //Get Fuel Type from WM
+        //Get Topography from WM
+        //Get Range from WOM
+
+        //Calculate overall chance
+
+        return burnChance;
+    }
     
     //Get all nearby points that can burn
     public List<GameObject> CheckNearbySparkPoints()
