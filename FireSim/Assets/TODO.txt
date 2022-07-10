@@ -2,6 +2,7 @@ WildfireManager
     Tick speed will need to correlate to game speed
 
 FireChanceIndicator
+    Fix
     Updates values on tick rather than every frame
         Remove stuff from update
     Take Range Into account
@@ -10,24 +11,21 @@ FireChanceIndicator
 
 SparkPoint
     enviro Variables
-        Wind
-        Humidity
-        Sunlight
-        Fuel Type
-            Living vs dead
-            Trees vs grass
-        Topography
         Range
-        ...
-        ...
-        ...
+        Wind
+        Sunlight
+        Topography
+    Put them all together - have a way to diable
     minimal global variables in this script?
     Remove temp global starting burning
     Gizmos not quite working
+    Add more fuel types (dead things?)
 
 Other
+    Clean Inspector Variables
     Organize Project folders
     Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
+    Fire jumping from wind
 
 How to play
-    Keep in mind number of things on fire around object
+    Keep in mind number of things on fire around object increases its chance

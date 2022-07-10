@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+
 
 public class SparkPoint : MonoBehaviour
 {
-    [SerializeField][Range(0,1)]
-    private float burnChance = 1f;
+    public bool saveDropdownOption;
+    [SerializeField] private float burnChance;
     private float sparkRadius = 2f;
     private bool isBurning = false;
 
-    [SerializeField]
-    private GameObject wildfireManager;
+    [HideInInspector] public int arrayIdx = 0;
+    [HideInInspector] public string[] FuelType = new string[] { "Trees", "Shrubs", "Grass"}; //If modifying, change these values in wildfire manager as well
 
 //******************************************************************************
 //                              Private Functions
@@ -33,17 +35,22 @@ private void Start()
     //Return if already burning
     public bool IsBurning(){return isBurning;}
     
+    public float GetBurnChance(){return burnChance;}
+
     //Return chance to burn
-    public float GetBurnChance()
+    public float CalculateBurnChance(float humidity, Dictionary<string, float> fuelBurnRate)
     {
+        //Humidity - lower humidity = higher burn chance
+        //Fuel Type - trees are less likely to burn, grass has more
+
         //Get Wind from WM
-        //Get Humidity from WM
         //Get Sunlight/ToD from WM
-        //Get Fuel Type from WM
         //Get Topography from WM
         //Get Range from WOM
 
         //Calculate overall chance
+        //burnChance = (1f - humidity);
+        burnChance = fuelBurnRate[FuelType[arrayIdx]];
 
         return burnChance;
     }

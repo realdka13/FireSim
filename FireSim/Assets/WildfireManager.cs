@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Unity.Jobs;
 
 /*
     Keeps track of ticks
@@ -10,24 +12,34 @@ public class WildfireManager : MonoBehaviour
 {
     //Tick Tracker
     [Header("Tick Settings")]
-    [SerializeField]
-    private bool tickEnable;
-    [SerializeField]
-    private float tickTime = 2f;
+    [SerializeField] private bool tickEnable;
+    [SerializeField] private float tickTime = 2f;
     private float timeSinceLastTick = 0f;
+
+    //Fire
+    [Space][SerializeField] private List<GameObject> burningPoints = new List<GameObject>();
+    [SerializeField] private GameObject firePrefab;
 
     //Fire Modifiers
     [Header("Fire Settings")]
-    [SerializeField]
-    private GameObject firePrefab;
-    [SerializeField]
-    private float sparkRadius;
+    [SerializeField][Range(0,1)] private float humidity;
+
+    public Dictionary<string, float> fuelBurnRate = new Dictionary<string, float> //If modifying, change these values in spark point as well
+    {{ "Trees", .15f },{ "Shrubs", .4f },{ "Grass", .75f }};
 
     [Space]
+    [SerializeField] private float sparkRadius;
+    [SerializeField] private AnimationCurve rangeInterpCurve;
 
-    //Fire Tracker
-    [SerializeField]
-    private List<GameObject> burningPoints = new List<GameObject>();
+    [Space]
+    [SerializeField] private float windSpeed;
+    [SerializeField] private Vector3 windDir;
+
+    [Space]
+    [SerializeField] private AnimationCurve sunlightInterpCurve;
+
+    [Space]
+    [SerializeField] private bool tempTopography;
 
 //******************************************************************************
 //                              Private Functions
@@ -73,7 +85,7 @@ public class WildfireManager : MonoBehaviour
         {
             foreach (GameObject point in pointsInRange)
             {
-                if(Random.value < point.GetComponent<SparkPoint>().GetBurnChance()) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
+                if(Random.value < point.GetComponent<SparkPoint>().CalculateBurnChance(humidity, fuelBurnRate)) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
                 {
                     //Insantiate flames
                     Instantiate(firePrefab, point.transform);

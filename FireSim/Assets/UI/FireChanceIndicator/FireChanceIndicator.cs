@@ -6,13 +6,12 @@ using UnityEngine.UI;
 public class FireChanceIndicator : MonoBehaviour
 {
     //Settings
-    [SerializeField][Header("Objects")]
-    private Canvas canvas;
-    [SerializeField]
-    private GameObject radialBarPrefab;
+    [Header("Objects")]
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject radialBarPrefab;
 
-    [SerializeField][Header("Color")]
-    private Gradient percentGradient;
+    [Header("Color")]
+    [SerializeField] private Gradient percentGradient;
 
     private bool objectSelected = false;
     private bool selectedObjectBurning = false;

@@ -156,7 +156,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   burnChance: 0.75
-  wildfireManager: {fileID: 0}
+  arrayIdx: 2
+  FuelType:
+  - Trees
+  - Shrubs
+  - Grass
 --- !u!1 &2133676834682747002
 GameObject:
   m_ObjectHideFlags: 0
