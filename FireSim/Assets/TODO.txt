@@ -11,14 +11,16 @@ FireChanceIndicator
 
 SparkPoint
     enviro Variables
-        Range
-        Wind
         Sunlight
-        Topography
-    Put them all together - have a way to diable
+    Put them all together - have a way to disable
     minimal global variables in this script?
-    Remove temp global starting burning
     Gizmos not quite working
+    Remove sparkRadius
+    Clean and Optimize - like adding arguments to an array
+
+    Enviro variables
+        Topography
+    Remove temp global starting burning
     Add more fuel types (dead things?)
 
 Other

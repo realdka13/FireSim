@@ -38,31 +38,34 @@ private void Start()
     public float GetBurnChance(){return burnChance;}
 
     //Return chance to burn
-    public float CalculateBurnChance(float humidity, Dictionary<string, float> fuelBurnRate)
+    public float CalculateBurnChance(float radius, float humidityModifier, Dictionary<string, float> fuelBurnRate, AnimationCurve rangeCurve, Vector3 sourcePosition, Vector3 windVector, AnimationCurve windCurve)
     {
-        //Humidity - lower humidity = higher burn chance
-        //Fuel Type - trees are less likely to burn, grass has more
+        //Humidity - lower humidity = higher burn chance1
+        //Fuel Type - trees are less likely to burn, grass has more. These are consts values
+        //Range - The closer the point is to already burning points, the more likely it is to burn
+        //Wind - Compares the wind vector and object location vector, the more in line they are the more likely the chance of spread
 
-        //Get Wind from WM
         //Get Sunlight/ToD from WM
-        //Get Topography from WM
-        //Get Range from WOM
 
         //Calculate overall chance
-        //burnChance = (1f - humidity);
-        burnChance = fuelBurnRate[FuelType[arrayIdx]];
+        //burnChance = humidityModifier;
+        //burnChance = fuelBurnRate[FuelType[arrayIdx]];
+        //burnChance = rangeCurve.Evaluate(Vector3.Distance(sourcePosition, transform.position) / radius);
+        
+        float windModifier = Vector3.Dot((transform.position - sourcePosition).normalized, windVector.normalized);
+        if(windModifier >= 0){burnChance = windCurve.Evaluate(windModifier);}else{burnChance = 0;}
 
         return burnChance;
     }
     
     //Get all nearby points that can burn
-    public List<GameObject> CheckNearbySparkPoints()
+    public List<GameObject> CheckNearbySparkPoints(float radius)
     {
         //Create List of flammable objects nearby
         List<GameObject> sparkPoints = new List<GameObject>();
 
         //Check nearby for flammable objects - 1024 is Layer 10
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, sparkRadius, 1024);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius, 1024);
         foreach (Collider collider in hitColliders)
         {
             sparkPoints.Add(collider.gameObject);
