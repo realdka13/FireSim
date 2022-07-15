@@ -20,6 +20,10 @@ public class WildfireManager : MonoBehaviour
     [Space][SerializeField] private List<GameObject> burningPoints = new List<GameObject>();
     [SerializeField] private GameObject firePrefab;
 
+    //Visualizer
+    [Space][SerializeField] bool useVisualizer;
+    [SerializeField] private Gradient visualGradient;
+
     //Fire Modifiers
     [Header("Fire Settings")]
     [SerializeField] private AnimationCurve humidityInterpCurve;
@@ -88,17 +92,25 @@ public class WildfireManager : MonoBehaviour
             {
                 foreach (GameObject point in pointsInRange)
                 {
-                    //Do random selection
-                    if(Random.value < point.GetComponent<SparkPoint>().CalculateBurnChance(sparkRadius, humidityInterpCurve.Evaluate(humidity), fuelBurnRate, rangeInterpCurve, burningPoint.transform.position, windDir, windInterpCurve)) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
+                    if(useVisualizer)
                     {
-                        //Insantiate flames
-                        Instantiate(firePrefab, point.transform);
+                        float burnChance = point.GetComponent<SparkPoint>().CalculateBurnChance(sparkRadius, humidityInterpCurve.Evaluate(humidity), fuelBurnRate, rangeInterpCurve, burningPoint.transform.position, windDir, windInterpCurve);
+                        point.GetComponent<SparkPoint>().SetToBurning(visualGradient.Evaluate(burnChance));
+                    }
+                    else
+                    {
+                        //Do random selection
+                        if(Random.value < point.GetComponent<SparkPoint>().CalculateBurnChance(sparkRadius, humidityInterpCurve.Evaluate(humidity), fuelBurnRate, rangeInterpCurve, burningPoint.transform.position, windDir, windInterpCurve)) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
+                        {
+                            //Insantiate flames
+                            Instantiate(firePrefab, point.transform);
 
-                        //Tell SparkPoint its burning
-                        point.GetComponent<SparkPoint>().SetToBurning();
+                            //Tell SparkPoint its burning
+                            point.GetComponent<SparkPoint>().SetToBurning();
 
-                        //Add to burningPoints List
-                        pointsNowOnFire.Add(point);
+                            //Add to burningPoints List
+                            pointsNowOnFire.Add(point);
+                        }
                     }
                 }
             }

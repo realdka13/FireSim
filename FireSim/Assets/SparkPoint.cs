@@ -80,6 +80,13 @@ private void Start()
         gameObject.layer = 11;
         isBurning = true;
     }
+    public void SetToBurning(Color color)
+    {
+        gameObject.layer = 11;
+        isBurning = true;
+
+        transform.parent.GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", color);
+    }
 
 //******************************************************************************
 //                              Editor Functions
