@@ -10,23 +10,20 @@ FireChanceIndicator
     Move to a HUD rather than in the enviro?
 
 SparkPoint
-    enviro Variables
-        Sunlight
-    Put them all together - have a way to disable
-    minimal global variables in this script?
     Gizmos not quite working
-    Remove sparkRadius
-    Clean and Optimize - like adding arguments to an array
-
+        Spark Radius
+    Weighting Variables
     Enviro variables
+        Sunlight
         Topography
     Remove temp global starting burning
     Add more fuel types (dead things?)
 
 Other
-    Clean Inspector Variables
+    Add tree meshes
     Organize Project folders
     Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
+    Firefighting tools
     Fire jumping from wind
 
 How to play

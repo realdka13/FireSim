@@ -6,11 +6,14 @@ using UnityEditor;
 
 public class SparkPoint : MonoBehaviour
 {
-    public bool saveDropdownOption;
+    //Spark Point variables
     [SerializeField] private float burnChance;
-    private float sparkRadius = 2f;
     private bool isBurning = false;
 
+    private float sparkRadius = 2f;
+
+    //Dropdown List
+    public bool saveDropdownOption;
     [HideInInspector] public int arrayIdx = 0;
     [HideInInspector] public string[] FuelType = new string[] { "Trees", "Shrubs", "Grass"}; //If modifying, change these values in wildfire manager as well
 
@@ -35,27 +38,44 @@ private void Start()
     //Return if already burning
     public bool IsBurning(){return isBurning;}
     
+    //Return the most recently calculated burn chance
     public float GetBurnChance(){return burnChance;}
 
     //Return chance to burn
-    public float CalculateBurnChance(float radius, float humidityModifier, Dictionary<string, float> fuelBurnRate, AnimationCurve rangeCurve, Vector3 sourcePosition, Vector3 windVector, AnimationCurve windCurve)
+    public float CalculateBurnChance(float humidityModifier, Dictionary<string, float> fuelBurnRate, Vector3 sourcePosition, float radius, float windSpeed, float maxWindSpeed, Vector3 windDir, AnimationCurve[] animCurves, bool[] modifierBools)
     {
-        //Humidity - lower humidity = higher burn chance1
-        //Fuel Type - trees are less likely to burn, grass has more. These are consts values
-        //Range - The closer the point is to already burning points, the more likely it is to burn
-        //Wind - Compares the wind vector and object location vector, the more in line they are the more likely the chance of spread
+        //Humidity - lower humidity = higher burn chance - modifierBools[0]
+        //Fuel Type - trees are less likely to burn, grass has more. These are consts values - modifierBools[1]
+        //Range - The closer the point is to already burning points, the more likely it is to burn - modifierBools[2]
+        //Wind - Compares the wind vector and object location vector, the more in line they are the more likely the chance of spread - modifierBools[3]
 
-        //Get Sunlight/ToD from WM
+        //Calculate Modifiers
+        float fuelModifier = fuelBurnRate[FuelType[arrayIdx]];
+        float rangeModifier = animCurves[0].Evaluate(Vector3.Distance(sourcePosition, transform.position) / radius); //animCurves[0] (rangeInterpCurve)
 
-        //Calculate overall chance
-        //burnChance = humidityModifier;
-        //burnChance = fuelBurnRate[FuelType[arrayIdx]];
-        //burnChance = rangeCurve.Evaluate(Vector3.Distance(sourcePosition, transform.position) / radius);
-        
-        float windModifier = Vector3.Dot((transform.position - sourcePosition).normalized, windVector.normalized);
-        if(windModifier >= 0){burnChance = windCurve.Evaluate(windModifier);}else{burnChance = 0;}
+        //Wind Modifiers
+        float windSpeedModifier = animCurves[1].Evaluate(windSpeed / maxWindSpeed); //animCurves[1] (windSpeedCurve)
+        float windAngleModifier = Vector3.Dot((transform.position - sourcePosition).normalized, windDir.normalized);
+        float totalWindModifier = 0f;   //Variable for combining angle and speed modifiers
 
-        return burnChance;
+        //animCurve[2](windAngleCurve) creates the gradient angles of burn chance with the highest parallel with the wind, and lowest perpendicular
+        //(windAngleModifier^windSpeedModifier) Narrows high chance area as speeds increase
+        //windStregnthModifier(animCurves[3]) changes the characteristics of the burn chance as wind speed increases
+        if(windAngleModifier >= 0){windAngleModifier = animCurves[2].Evaluate(windAngleModifier);}else{windAngleModifier = 0;}
+        totalWindModifier = (Mathf.Pow(windAngleModifier, windSpeedModifier)) * animCurves[3].Evaluate(windSpeed / maxWindSpeed);
+
+        //Calculate BurnChance
+        burnChance = 0;
+        int numberOfMods = 0;
+
+        //Finds modifiers that are enabled
+        if(modifierBools[0]){burnChance += humidityModifier; numberOfMods++;}
+        if(modifierBools[1]){burnChance += fuelModifier; numberOfMods++;}
+        if(modifierBools[2]){burnChance += rangeModifier; numberOfMods++;}
+        if(modifierBools[3]){burnChance += totalWindModifier; numberOfMods++;}
+
+        if(numberOfMods > 0){return burnChance / numberOfMods;} //Check for divide by 0
+        else{return 0f;}
     }
     
     //Get all nearby points that can burn
@@ -80,7 +100,7 @@ private void Start()
         gameObject.layer = 11;
         isBurning = true;
     }
-    public void SetToBurning(Color color)
+    public void SetToBurning(Color color) //Used for the visualizer
     {
         gameObject.layer = 11;
         isBurning = true;

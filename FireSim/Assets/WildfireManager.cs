@@ -17,32 +17,43 @@ public class WildfireManager : MonoBehaviour
     private float timeSinceLastTick = 0f;
 
     //Fire
-    [Space][SerializeField] private List<GameObject> burningPoints = new List<GameObject>();
+    [Space][Header("Fire Objects")]
     [SerializeField] private GameObject firePrefab;
+    [SerializeField] private List<GameObject> burningPoints = new List<GameObject>();
 
     //Visualizer
-    [Space][SerializeField] bool useVisualizer;
+    [Space][Header("Visualize Burn Area")]
+    [SerializeField] bool useVisualizer;
     [SerializeField] private Gradient visualGradient;
 
     //Fire Modifiers
-    [Header("Fire Settings")]
-    [SerializeField] private AnimationCurve humidityInterpCurve;
+    [Space][Header("Humidity")]
+    [SerializeField] private bool humidityModOn;
     [SerializeField][Range(0,1)] private float humidity;
+    [SerializeField] private AnimationCurve humidityInterpCurve;
 
-    public Dictionary<string, float> fuelBurnRate = new Dictionary<string, float> //If modifying, change these values in spark point as well
-    {{ "Trees", .15f },{ "Shrubs", .4f },{ "Grass", .75f }};
+    [Space][Header("Fuel - Modify In Code")]
+    [SerializeField] private bool fuelModOn;
+    private Dictionary<string, float> fuelBurnRate = new Dictionary<string, float> //If modifying, change these values in spark point as well
+    {{ "Trees", .25f },{ "Shrubs", .55f },{ "Grass", .75f }};
 
-    [Space]
+    [Space][Header("Range")]
+    [SerializeField] private bool rangeModOn;
     [SerializeField] private float sparkRadius;
     [SerializeField] private AnimationCurve rangeInterpCurve;
 
-    [Space]
+    [Space][Header("Wind")] /***See SparkPoint.cs for details***/
+    [SerializeField] private bool windModOn;
     [SerializeField] private float windSpeed;
+    [SerializeField] private float maxWindSpeed;
     [SerializeField] private Vector3 windDir;
-    [SerializeField] private AnimationCurve windInterpCurve;
+    [SerializeField] private AnimationCurve windSpeedCurve;
+    [SerializeField] private AnimationCurve windAngleCurve;
+    [SerializeField] private AnimationCurve windStrengthModifier;
 
-    [Space]
-    [SerializeField] private AnimationCurve sunlightInterpCurve;
+    //Others - For cleaner code
+    private bool[] modifierBools;
+    private AnimationCurve[] animCurves;
 
 //******************************************************************************
 //                              Private Functions
@@ -51,6 +62,12 @@ public class WildfireManager : MonoBehaviour
     {
         //Error Check
         if(sparkRadius == 0){Debug.LogWarning("Spark Radius = 0");}
+
+        //Set ModifierBools
+        modifierBools = new bool[] {humidityModOn, fuelModOn, rangeModOn, windModOn};
+
+        //Set animCurves
+        animCurves = new AnimationCurve[] {rangeInterpCurve, windSpeedCurve, windAngleCurve, windStrengthModifier};
     }
 
     private void Update()
@@ -94,13 +111,13 @@ public class WildfireManager : MonoBehaviour
                 {
                     if(useVisualizer)
                     {
-                        float burnChance = point.GetComponent<SparkPoint>().CalculateBurnChance(sparkRadius, humidityInterpCurve.Evaluate(humidity), fuelBurnRate, rangeInterpCurve, burningPoint.transform.position, windDir, windInterpCurve);
+                        float burnChance = point.GetComponent<SparkPoint>().CalculateBurnChance(humidityInterpCurve.Evaluate(humidity), fuelBurnRate, burningPoint.transform.position, sparkRadius, windSpeed, maxWindSpeed, windDir, animCurves, modifierBools);
                         point.GetComponent<SparkPoint>().SetToBurning(visualGradient.Evaluate(burnChance));
                     }
                     else
                     {
                         //Do random selection
-                        if(Random.value < point.GetComponent<SparkPoint>().CalculateBurnChance(sparkRadius, humidityInterpCurve.Evaluate(humidity), fuelBurnRate, rangeInterpCurve, burningPoint.transform.position, windDir, windInterpCurve)) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
+                        if(Random.value < point.GetComponent<SparkPoint>().CalculateBurnChance(humidityInterpCurve.Evaluate(humidity), fuelBurnRate, burningPoint.transform.position, sparkRadius, windSpeed, maxWindSpeed, windDir, animCurves, modifierBools)) //Is less than because we want a 100% chance when BurnChance is 1, and 0% chance when its 0
                         {
                             //Insantiate flames
                             Instantiate(firePrefab, point.transform);
@@ -129,5 +146,8 @@ public class WildfireManager : MonoBehaviour
         }
 
        windDir = Vector3.ClampMagnitude(windDir, 1f);
+       sparkRadius = Mathf.Clamp(sparkRadius, 0, float.MaxValue);
+       windSpeed = Mathf.Clamp(windSpeed, 0, float.MaxValue);
+       maxWindSpeed = Mathf.Clamp(maxWindSpeed, 0, float.MaxValue);
     }
 }
