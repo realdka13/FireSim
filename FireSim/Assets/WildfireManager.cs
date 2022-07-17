@@ -35,7 +35,7 @@ public class WildfireManager : MonoBehaviour
     [Space][Header("Fuel - Modify In Code")]
     [SerializeField] private bool fuelModOn;
     private Dictionary<string, float> fuelBurnRate = new Dictionary<string, float> //If modifying, change these values in spark point as well
-    {{ "Trees", .25f },{ "Shrubs", .55f },{ "Grass", .75f }};
+    {{ "Trees", .15f },{ "Shrubs", .40f },{ "Grass", .75f }};
 
     [Space][Header("Range")]
     [SerializeField] private bool rangeModOn;
