@@ -20,7 +20,6 @@ SparkPoint
     Add more fuel types (dead things?)
 
 Other
-    Add tree meshes
     Organize Project folders
     Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
     Firefighting tools
