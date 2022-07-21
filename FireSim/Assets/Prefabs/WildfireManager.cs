@@ -10,12 +10,6 @@ using Unity.Jobs;
 
 public class WildfireManager : MonoBehaviour
 {
-    //Tick Tracker
-    [Header("Tick Settings")]
-    [SerializeField] private bool tickEnable;
-    [SerializeField] private float tickTime = 2f;
-    private float timeSinceLastTick = 0f;
-
     //Fire
     [Space][Header("Fire Objects")]
     [SerializeField] private GameObject firePrefab;
@@ -70,26 +64,10 @@ public class WildfireManager : MonoBehaviour
         animCurves = new AnimationCurve[] {rangeInterpCurve, windSpeedCurve, windAngleCurve, windStrengthModifier};
     }
 
-    private void Update()
-    {
-        //Check if tickTime has passed
-        if((timeSinceLastTick > tickTime) && tickEnable)
-        {
-            Debug.Log("Tick");
-            SpreadFire();
-            timeSinceLastTick = 0f;
-        }
-        else if(tickEnable)
-        {
-            timeSinceLastTick += Time.deltaTime;
-        }
-        else
-        {
-            timeSinceLastTick = 0f;
-        }
-    }
-
-    private void SpreadFire()
+//******************************************************************************
+//                              Public Functions
+//******************************************************************************
+    public void SpreadFire()
     {
         List<GameObject> pointsNowOnFire = new List<GameObject>();
         pointsNowOnFire.Clear();

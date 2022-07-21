@@ -1,13 +1,14 @@
 WildfireManager
     Tick speed will need to correlate to game speed
 
-FireChanceIndicator
-    Fix
-    Updates values on tick rather than every frame
-        Remove stuff from update
-    Take Range Into account
-    Recalculate % to light on fire based on number of spark points, and # of objects on fire around it
-    Move to a HUD rather than in the enviro?
+UI
+    FirefightingTools
+        Clean and comment
+    FireChanceIndicator
+        Updates values on tick rather than every frame
+            Remove stuff from update
+        Recalculate % to light on fire based on number of spark points, and # of objects on fire around it
+        Move to a HUD rather than in the enviro?
 
 SparkPoint
     Gizmos not quite working
@@ -20,9 +21,8 @@ SparkPoint
     Add more fuel types (dead things?)
 
 Other
-    Organize Project folders
-    Handle the multiple cameras better (making sure their values stay the same by maybe spawning other cam at runtime)
     Firefighting tools
+    new Unity input system
     Fire jumping from wind
 
 How to play
