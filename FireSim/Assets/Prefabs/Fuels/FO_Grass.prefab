@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2133676834474299860}
   m_Layer: 10
   m_Name: Generic_Spark_Point
-  m_TagString: Untagged
+  m_TagString: Unburned
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

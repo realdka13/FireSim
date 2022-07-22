@@ -4,7 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Flammable Object
+  - Unburned
+  - Burning
+  - Burnt
   layers:
   - Default
   - TransparentFX
@@ -16,9 +18,9 @@ TagManager:
   - 
   - Ground
   - 
-  - Unburned
-  - Burning
-  - Burned
+  - FlammableObject
+  - 
+  - 
   - 
   - 
   - 

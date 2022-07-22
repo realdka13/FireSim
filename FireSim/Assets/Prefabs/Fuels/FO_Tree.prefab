@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4907146661636565462}
   m_Layer: 10
   m_Name: Generic_Spark_Point (1)
-  m_TagString: Untagged
+  m_TagString: Unburned
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 4907146662707696251}
   m_Layer: 10
   m_Name: Generic_Spark_Point
-  m_TagString: Untagged
+  m_TagString: Unburned
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

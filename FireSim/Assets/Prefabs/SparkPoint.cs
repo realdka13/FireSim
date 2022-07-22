@@ -22,8 +22,8 @@ public class SparkPoint : MonoBehaviour
 //******************************************************************************
 private void Start()
 {
-    //TMP if layer == 10, start burning
-    if(gameObject.layer == 11)
+    //TMP if tag == burning, start burning
+    if(gameObject.tag == "Burning")
     {
         SetToBurning();
     }
@@ -88,7 +88,10 @@ private void Start()
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius, 1024);
         foreach (Collider collider in hitColliders)
         {
-            sparkPoints.Add(collider.gameObject);
+            if(collider.gameObject.tag == "Unburned")
+            {
+                sparkPoints.Add(collider.gameObject);
+            }
         }
 
         return sparkPoints;
@@ -97,12 +100,12 @@ private void Start()
     //Does everything necessary when notified of its burning status
     public void SetToBurning()
     {
-        gameObject.layer = 11;
+        gameObject.tag = "Burning";
         isBurning = true;
     }
     public void SetToBurning(Color color) //Used for the visualizer
     {
-        gameObject.layer = 11;
+        gameObject.tag = "Burning";
         isBurning = true;
 
         transform.parent.GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", color);

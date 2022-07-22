@@ -37,19 +37,19 @@ public class FireFightingToolsUI : MonoBehaviour
 //******************************************************************************
 //                              Public Functions
 //******************************************************************************
-    public void CreateFireline()
+    public void InitiateFireline()
     {
         DisableButtons();
         firefightingManager.EnableFireline();
     }
 
-    public void CreateWaterDrop()
+    public void InitiateWaterDrop()
     {
         DisableButtons();
         firefightingManager.EnableWaterDrop();
     }
 
-    public void CreateRetardantDrop()
+    public void InitiateRetardantDrop()
     {
         DisableButtons();
         firefightingManager.EnableRetardantDrop();

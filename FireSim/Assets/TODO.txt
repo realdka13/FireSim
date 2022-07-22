@@ -4,6 +4,10 @@ WildfireManager
 UI
     FirefightingTools
         Clean and comment
+        Reduce global variables?
+        Constrain Variables
+        Back Burns
+        Different types of each, like bulldozers vs firefighters, or firefighter water
     FireChanceIndicator
         Updates values on tick rather than every frame
             Remove stuff from update
@@ -21,9 +25,17 @@ SparkPoint
     Add more fuel types (dead things?)
 
 Other
-    Firefighting tools
-    new Unity input system
+    New Unity input system
     Fire jumping from wind
+    Simplify scene setup
+    Fix tags vs layers?
 
 How to play
     Keep in mind number of things on fire around object increases its chance
+
+
+
+Main TODOs
+    firefighting tools
+    UI
+    Demo Scene

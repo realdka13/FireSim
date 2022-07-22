@@ -5,6 +5,7 @@ using UnityEngine;
 public class FirefightingManager : MonoBehaviour
 {
     //Firefighting UI
+    [Space]
     [SerializeField]private GameObject FirefightingToolsUIGO;
     private FireFightingToolsUI fireFightingToolsUI;
 
@@ -18,13 +19,28 @@ public class FirefightingManager : MonoBehaviour
     private Vector3 firstPoint;
     private Vector3 secondPoint;
 
-    [Space][SerializeField]private float dropHeight;
+    //Tool Settings
+    [Space]
+    [Header("Tool Settings")]
+    [SerializeField]private float dropHeight;
+    [SerializeField]private float laneWidth;
+
+    //Debug
+    [Space]
+    [Header("Debug")]
+    [SerializeField]private bool showDebugCube;
+    [SerializeField]private GameObject debugCube;
+
 
 //******************************************************************************
 //                              Private Functions
 //******************************************************************************
     private void Start()
     {
+        //Error Check
+        if(dropHeight == 0){Debug.LogWarning("dropHeight = 0");}
+        if(laneWidth == 0){Debug.LogWarning("laneWidth = 0");}
+
         //Sets FirefightingManagerUI
         fireFightingToolsUI = FirefightingToolsUIGO.GetComponent<FireFightingToolsUI>();
     }
@@ -56,7 +72,15 @@ public class FirefightingManager : MonoBehaviour
                         else
                         {
                             secondPoint = hit.point;
-                            CalculateLine();
+
+                            //Conduct Firefighting Mission
+                            DrawLines();
+                            GetSparkPointsInArea();
+
+                            //Decide which mission being conducted
+                            if(creatingFireline){CreateFireline();}
+                            else if(creatingWaterDrop){CreateWaterDrop();}
+                            else if(creatingRetardantDrop){CreateRetardantDrop();}
 
                             //Reset Everything
                             firstClickComplete = false;
@@ -74,24 +98,66 @@ public class FirefightingManager : MonoBehaviour
     }
 
     //Flatten and show debug lines in editor
-    private void CalculateLine()
+    private void DrawLines()
     {
-        Debug.DrawLine(firstPoint, secondPoint, Color.red, 3f);
+        //Raw player clicks line
+        Debug.DrawLine(firstPoint, secondPoint, Color.red, 5f);
 
-        //Flatten Line
-        firstPoint = new Vector3(firstPoint.x, dropHeight, firstPoint.z);
-        secondPoint = new Vector3(secondPoint.x, dropHeight, secondPoint.z);
+        //Flatten points
+        Vector3 flatFirstPoint = new Vector3(firstPoint.x, 0f, firstPoint.z);
+        Vector3 flatSecondPoint = new Vector3(secondPoint.x, 0f, secondPoint.z);
 
-        Debug.DrawLine(firstPoint, secondPoint, Color.green, 3f);
+        //Flattened and raised line
+        Debug.DrawLine(new Vector3(firstPoint.x, dropHeight, firstPoint.z), new Vector3(secondPoint.x, dropHeight, secondPoint.z), Color.green, 5f);
+
+        //OverlapBox
+        if(showDebugCube)
+        {
+            debugCube.transform.position = new Vector3((firstPoint.x + secondPoint.x) / 2f, dropHeight / 2f, (firstPoint.z + secondPoint.z) / 2f);
+            debugCube.transform.localScale = new Vector3(laneWidth , dropHeight, Vector3.Distance(flatFirstPoint, flatSecondPoint));
+            debugCube.transform.rotation = Quaternion.FromToRotation(Vector3.forward, flatSecondPoint - flatFirstPoint);
+        }
     }
+
+    private void GetSparkPointsInArea()
+    {
+        //Flatten Line
+        Vector3 flatFirstPoint = new Vector3(firstPoint.x, 0f, firstPoint.z);
+        Vector3 flatSecondPoint = new Vector3(secondPoint.x, 0f, secondPoint.z);
+
+        //Get Spark Points
+        Collider[] hitColliders = Physics.OverlapBox(new Vector3((firstPoint.x + secondPoint.x) / 2f, dropHeight / 2f, (firstPoint.z + secondPoint.z) / 2f), new Vector3(laneWidth , dropHeight / 2f, Vector3.Distance(flatFirstPoint, flatSecondPoint)), Quaternion.FromToRotation(Vector3.forward, flatSecondPoint - flatFirstPoint), 1024); //1024 is Layer 10
+        foreach (Collider collider in hitColliders)
+        {
+            Debug.Log(collider);
+        }
+
+        //return
+    }
+
+    private void CreateFireline(){Debug.Log("Fireline");}
+    private void CreateWaterDrop(){Debug.Log("Water Drop");}
+    private void CreateRetardantDrop(){Debug.Log("Retardant Drop");}
 
 //******************************************************************************
 //                              Public Functions
 //******************************************************************************
-public void EnableFireline(){creatingFireline = true;}
+    public void EnableFireline(){creatingFireline = true;}
 
-public void EnableWaterDrop(){creatingWaterDrop = true;}
+    public void EnableWaterDrop(){creatingWaterDrop = true;}
 
-public void EnableRetardantDrop(){creatingRetardantDrop = true;}
+    public void EnableRetardantDrop(){creatingRetardantDrop = true;}
+
+//******************************************************************************
+//                              Editor Functions
+//******************************************************************************
+    private void OnValidate() 
+    {
+        dropHeight = Mathf.Clamp(dropHeight, 0, float.MaxValue);
+        laneWidth = Mathf.Clamp(laneWidth, 0, float.MaxValue);
+
+        if(showDebugCube){debugCube.SetActive(true);}
+        else{debugCube.SetActive(false);}
+    }
 
 }
