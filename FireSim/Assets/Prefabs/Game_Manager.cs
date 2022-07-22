@@ -27,8 +27,8 @@ public class Game_Manager : MonoBehaviour
         if((timeSinceLastTick > tickTime) && tickEnable)
         {
             Debug.Log("Tick");
-            wildfireManager.SpreadFire();
             timeSinceLastTick = 0f;
+            wildfireManager.SpreadFire();
         }
         else if(tickEnable)
         {

@@ -22,8 +22,9 @@ public class FirefightingManager : MonoBehaviour
     //Tool Settings
     [Space]
     [Header("Tool Settings")]
-    [SerializeField]private float dropHeight;
+    [SerializeField]private float laneHeight;
     [SerializeField]private float laneWidth;
+    [SerializeField][Range(0,1)]private float retardantModifier;
 
     //Debug
     [Space]
@@ -38,7 +39,7 @@ public class FirefightingManager : MonoBehaviour
     private void Start()
     {
         //Error Check
-        if(dropHeight == 0){Debug.LogWarning("dropHeight = 0");}
+        if(laneHeight == 0){Debug.LogWarning("laneHeight = 0");}
         if(laneWidth == 0){Debug.LogWarning("laneWidth = 0");}
 
         //Sets FirefightingManagerUI
@@ -75,12 +76,13 @@ public class FirefightingManager : MonoBehaviour
 
                             //Conduct Firefighting Mission
                             DrawLines();
-                            GetSparkPointsInArea();
+                            
+                            GameObject[] sparkPointsInArea = GetSparkPointsInArea();
 
                             //Decide which mission being conducted
-                            if(creatingFireline){CreateFireline();}
-                            else if(creatingWaterDrop){CreateWaterDrop();}
-                            else if(creatingRetardantDrop){CreateRetardantDrop();}
+                            if(creatingFireline){CreateFireline(sparkPointsInArea);}
+                            else if(creatingWaterDrop){CreateWaterDrop(sparkPointsInArea);}
+                            else if(creatingRetardantDrop){CreateRetardantDrop(sparkPointsInArea);}
 
                             //Reset Everything
                             firstClickComplete = false;
@@ -108,36 +110,64 @@ public class FirefightingManager : MonoBehaviour
         Vector3 flatSecondPoint = new Vector3(secondPoint.x, 0f, secondPoint.z);
 
         //Flattened and raised line
-        Debug.DrawLine(new Vector3(firstPoint.x, dropHeight, firstPoint.z), new Vector3(secondPoint.x, dropHeight, secondPoint.z), Color.green, 5f);
+        Debug.DrawLine(new Vector3(firstPoint.x, laneHeight, firstPoint.z), new Vector3(secondPoint.x, laneHeight, secondPoint.z), Color.green, 5f);
 
         //OverlapBox
         if(showDebugCube)
         {
-            debugCube.transform.position = new Vector3((firstPoint.x + secondPoint.x) / 2f, dropHeight / 2f, (firstPoint.z + secondPoint.z) / 2f);
-            debugCube.transform.localScale = new Vector3(laneWidth , dropHeight, Vector3.Distance(flatFirstPoint, flatSecondPoint));
+            debugCube.transform.position = new Vector3((firstPoint.x + secondPoint.x) / 2f, laneHeight / 2f, (firstPoint.z + secondPoint.z) / 2f);
+            debugCube.transform.localScale = new Vector3(laneWidth , laneHeight, Vector3.Distance(flatFirstPoint, flatSecondPoint));
             debugCube.transform.rotation = Quaternion.FromToRotation(Vector3.forward, flatSecondPoint - flatFirstPoint);
         }
     }
 
-    private void GetSparkPointsInArea()
+    private GameObject[] GetSparkPointsInArea()
     {
         //Flatten Line
         Vector3 flatFirstPoint = new Vector3(firstPoint.x, 0f, firstPoint.z);
         Vector3 flatSecondPoint = new Vector3(secondPoint.x, 0f, secondPoint.z);
 
         //Get Spark Points
-        Collider[] hitColliders = Physics.OverlapBox(new Vector3((firstPoint.x + secondPoint.x) / 2f, dropHeight / 2f, (firstPoint.z + secondPoint.z) / 2f), new Vector3(laneWidth , dropHeight / 2f, Vector3.Distance(flatFirstPoint, flatSecondPoint)), Quaternion.FromToRotation(Vector3.forward, flatSecondPoint - flatFirstPoint), 1024); //1024 is Layer 10
-        foreach (Collider collider in hitColliders)
-        {
-            Debug.Log(collider);
-        }
+        Collider[] hitColliders = Physics.OverlapBox(new Vector3((firstPoint.x + secondPoint.x) / 2f, laneHeight / 2f, (firstPoint.z + secondPoint.z) / 2f), new Vector3(laneWidth, laneHeight, Vector3.Distance(flatFirstPoint, flatSecondPoint)) / 2f, Quaternion.FromToRotation(Vector3.forward, flatSecondPoint - flatFirstPoint), 1024); //1024 is Layer 10
 
-        //return
+        //Convert colliders to gameobjects
+        GameObject[] hitObjects = new GameObject[hitColliders.Length];
+        for (int i = 0; i < hitColliders.Length; i++)
+        {
+            hitObjects[i] = hitColliders[i].gameObject;
+        }
+        Debug.Log(hitColliders.Length);
+
+        return hitObjects;
     }
 
-    private void CreateFireline(){Debug.Log("Fireline");}
-    private void CreateWaterDrop(){Debug.Log("Water Drop");}
-    private void CreateRetardantDrop(){Debug.Log("Retardant Drop");}
+    private void CreateFireline(GameObject[] sparkPoints)
+    {
+        foreach (GameObject sparkpoint in sparkPoints)
+        {
+            if(sparkpoint.transform.parent.gameObject != null)  //Checks to see if the object has already been deleted
+            {
+                sparkpoint.GetComponent<SparkPoint>().Extinguish(); //Extinguish first
+                Destroy(sparkpoint.transform.parent.gameObject); //Delete the objects in the fireline
+            }
+        }
+    }
+
+    private void CreateWaterDrop(GameObject[] sparkPoints)
+    {
+        foreach (GameObject sparkpoint in sparkPoints)
+        {
+            sparkpoint.GetComponent<SparkPoint>().Extinguish();
+        }
+    }
+
+    private void CreateRetardantDrop(GameObject[] sparkPoints)
+    {
+        foreach (GameObject sparkpoint in sparkPoints)
+        {
+            sparkpoint.GetComponent<SparkPoint>().CoverWithRetardant(retardantModifier);
+        }
+    }
 
 //******************************************************************************
 //                              Public Functions
@@ -153,7 +183,7 @@ public class FirefightingManager : MonoBehaviour
 //******************************************************************************
     private void OnValidate() 
     {
-        dropHeight = Mathf.Clamp(dropHeight, 0, float.MaxValue);
+        laneHeight = Mathf.Clamp(laneHeight, 0, float.MaxValue);
         laneWidth = Mathf.Clamp(laneWidth, 0, float.MaxValue);
 
         if(showDebugCube){debugCube.SetActive(true);}

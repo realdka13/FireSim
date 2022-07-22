@@ -113,6 +113,11 @@ public class WildfireManager : MonoBehaviour
         burningPoints.AddRange(pointsNowOnFire);
     }
 
+    public void RemoveBurningPoint(GameObject sparkPoint)
+    {
+        burningPoints.Remove(sparkPoint);
+    }
+
 //******************************************************************************
 //                              Editor Functions
 //******************************************************************************

@@ -26,9 +26,11 @@ SparkPoint
 
 Other
     New Unity input system
+    Dont allow fireline cutting of already burning objects / too close to burning objects
     Fire jumping from wind
+    Burning Objects eventually burn out completely
+    Color of objects change based off of humidity
     Simplify scene setup
-    Fix tags vs layers?
 
 How to play
     Keep in mind number of things on fire around object increases its chance
@@ -36,6 +38,6 @@ How to play
 
 
 Main TODOs
-    firefighting tools
+    Firefighting tools
     UI
     Demo Scene

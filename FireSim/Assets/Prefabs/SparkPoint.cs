@@ -9,8 +9,12 @@ public class SparkPoint : MonoBehaviour
     //Spark Point variables
     [SerializeField] private float burnChance;
     private bool isBurning = false;
+    private bool coveredWithRetardant = false;
+    private float retardantModifier;
 
     private float sparkRadius = 2f;
+
+    private GameObject wildfireManager;
 
     //Dropdown List
     public bool saveDropdownOption;
@@ -27,6 +31,9 @@ private void Start()
     {
         SetToBurning();
     }
+
+    //Get Reference to WildfireManager
+    wildfireManager = GameObject.FindWithTag("WildfireManager");
 }
 
 //******************************************************************************
@@ -74,7 +81,17 @@ private void Start()
         if(modifierBools[2]){burnChance += rangeModifier; numberOfMods++;}
         if(modifierBools[3]){burnChance += totalWindModifier; numberOfMods++;}
 
-        if(numberOfMods > 0){return burnChance / numberOfMods;} //Check for divide by 0
+        if(numberOfMods > 0)
+        {
+            if(coveredWithRetardant)
+            {
+                return (burnChance / numberOfMods) * retardantModifier;
+            }
+            else
+            {
+                return burnChance / numberOfMods;
+            }
+        } //Check for divide by 0
         else{return 0f;}
     }
     
@@ -109,6 +126,23 @@ private void Start()
         isBurning = true;
 
         transform.parent.GetChild(0).GetComponent<Renderer>().material.SetColor("_Color", color);
+    }
+
+    //Does everything necessary when notified its no longer burning
+    public void Extinguish()
+    {
+        gameObject.tag = "Unburned";
+        wildfireManager.GetComponent<WildfireManager>().RemoveBurningPoint(gameObject);
+        if(transform.childCount > 0)
+        {
+            Destroy(transform.GetChild(0).gameObject);
+        }
+    }
+
+    public void CoverWithRetardant(float modifier)
+    {
+        coveredWithRetardant = true;
+        retardantModifier = modifier;
     }
 
 //******************************************************************************
