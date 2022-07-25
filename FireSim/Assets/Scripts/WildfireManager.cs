@@ -118,6 +118,12 @@ public class WildfireManager : MonoBehaviour
         burningPoints.Remove(sparkPoint);
     }
 
+    public float GetHumidity(){return humidity;}
+
+    public float GetWindSpeed(){return windSpeed;}
+
+    public Vector3 GetWindDir(){return windDir;}
+
 //******************************************************************************
 //                              Editor Functions
 //******************************************************************************
